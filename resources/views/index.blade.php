@@ -8,7 +8,7 @@
             <div class="container">
                 <div class="formboxsec">
                     <form id="stationaryCombustionForm" method="post" action="">
-                        <input type="text" name="id" id="calculation_id">
+                        <input type="hidden" name="id" id="calculation_id">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="formtitle">
@@ -144,9 +144,9 @@
                                 <tr class="boxr" data-id="{{ $calculation->id }}">
                                     <td class="boxr">{{ $calculation->facility_id }}</td>
                                     <td>{{ $calculation->year }}</td>
-                                    <td>{{ $calculation->fuel_type_id }}</td>
+                                    <td>{{ $calculation->fuelType->name }}</td>
                                     <td>{{ $calculation->amount_of_fuel }}</td>
-                                    <td>{{ $calculation->unit_id }}</td>
+                                    <td>{{ $calculation->fuelUnit->name }}</td>
                                     <td>{{ $calculation->co2 }}</td>
                                     <td>{{ $calculation->ch4 }}</td>
                                     <td>{{ $calculation->n2o }}</td>
@@ -224,6 +224,9 @@
                 },
                 function (res, status) {
                     if (status === 'success') {
+                        if (res.performed === 'update') {
+                            $(`tr[data-id=${res.data.id}]`).remove();
+                        }
                         addRowToTable(res.data);
                     }
                 });
@@ -234,9 +237,9 @@
             <tr class="boxr" data-id="${data.id}">
                <td class="boxr">${data.facility_id}</td>
                <td>${data.year}</td>
-               <td>${data.fuel_type_id}</td>
+               <td>${data.fuel_type.name}</td>
                <td>${data.amount_of_fuel}</td>
-               <td>${data.unit_id}</td>
+               <td>${data.fuel_unit.name}</td>
                <td>${data.co2}</td>
                <td>${data.ch4}</td>
                <td>${data.n2o}</td>
@@ -264,13 +267,13 @@
                 if (status === 'success') {
                     $('#calculation_id').val(res.data.id);
                     $('#facilities').val(res.data.facility_id);
-                    $('#facilities').siblings('.select-selected').text( $('#facilities option[value='+res.data.facility_id+']').text());
+                    $('#facilities').siblings('.select-selected').text($('#facilities option[value=' + res.data.facility_id + ']').text());
                     $('#fuel-types').val(res.data.fuel_type_id);
-                    $('#fuel-types').siblings('.select-selected').text( $('#fuel-types option[value='+res.data.fuel_type_id+']').text());
+                    $('#fuel-types').siblings('.select-selected').text($('#fuel-types option[value=' + res.data.fuel_type_id + ']').text());
                     $('#fuel-units').val(res.data.unit_id);
-                    $('#fuel-units').siblings('.select-selected').text( $('#fuel-units option[value='+res.data.unit_id+']').text());
+                    $('#fuel-units').siblings('.select-selected').text($('#fuel-units option[value=' + res.data.unit_id + ']').text());
                     $('#years').val(res.data.year);
-                    $('#years').siblings('.select-selected').text( $('#years option[value='+res.data.year+']').text());
+                    $('#years').siblings('.select-selected').text($('#years option[value=' + res.data.year + ']').text());
                     $('#amount-of-fuel').val(res.data.amount_of_fuel);
                     $('#co2').val(res.data.co2);
                     $('#ch4').val(res.data.ch4);

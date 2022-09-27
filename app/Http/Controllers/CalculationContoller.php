@@ -15,13 +15,12 @@ class CalculationContoller extends Controller
 {
     public function index()
     {
-//        Calculation::all()->
         return view('index')->with([
             'facilities' => Facility::all(),
             'years' => Year::all(),
             'fuelTypes' => FuelType::all(),
             'fuelUnits' => FuelUnit::all(),
-            'calculations' => Calculation::all()
+            'calculations' => Calculation::with(['fuelType', 'fuelUnit'])->get()
         ]);
     }
 
@@ -43,9 +42,10 @@ class CalculationContoller extends Controller
         $fuelUnit = FuelUnit::find($validated['unit_id']);
         $amountOfGasesReleased = $this->calculateAmountOfGasesReleased($fuelType->factor_rate, $fuelUnit->factor_rate, $validated['amount_of_fuel']);
         $calculation = Calculation::updateOrcreate(['id' => $validated['id']], array_merge($validated, $amountOfGasesReleased));
-
+        if(!$calculation->wasRecentlyCreated && $calculation->wasChanged()) $performed = 'update';
         return response()->json([
-            'data' => $calculation
+            'data' => $calculation->load('fuelType', 'fuelUnit'),
+            'performed' => $performed ?? null
         ]);
     }
 

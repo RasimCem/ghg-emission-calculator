@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Calculation extends Model
 {
@@ -20,5 +21,15 @@ class Calculation extends Model
         self::N2O_RATE_FACTOR,
         self::CO2E_RATE_FACTOR,
     ];
+
+    public function fuelType(): HasOne
+    {
+        return $this->hasOne(FuelType::class, 'id', 'fuel_type_id');
+    }
+
+    public function fuelUnit(): HasOne
+    {
+        return $this->hasOne(FuelUnit::class, 'id', 'unit_id');
+    }
 
 }
