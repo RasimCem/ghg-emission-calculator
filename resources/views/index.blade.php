@@ -141,7 +141,7 @@
                             </thead>
                             <tbody class="boxr">
                             @foreach($calculations as $calculation)
-                                <tr class="boxr" data-id="{{ $calculation->id }}">
+                                <tr class="boxr" data-id="{{$calculation->id}}">
                                     <td class="boxr">{{ $calculation->facility_id }}</td>
                                     <td>{{ $calculation->year }}</td>
                                     <td>{{ $calculation->fuelType->name }}</td>
@@ -152,8 +152,10 @@
                                     <td>{{ $calculation->n2o }}</td>
                                     <td>{{ $calculation->co2e }}</td>
                                     <td class="tableright smw">
-                                        <a class="tabbtn remove" href="javascript:void(0)">Sil</a><br>
-                                        <a class="tabbtn edit" href="javascript:void(0)">Düzenle</a><br>
+                                        <a class="tabbtn" href="javascript:void(0)"
+                                           onclick="deleteRow('{{$calculation->id}}')">Sil</a><br>
+                                        <a class="tabbtn" href="javascript:void(0)"
+                                           onclick="editRow('{{$calculation->id}}')">Düzenle</a><br>
                                     </td>
                                 </tr>
                             @endforeach
@@ -245,24 +247,24 @@
                <td>${data.n2o}</td>
                <td>${data.co2e}</td>
                <td class="tableright smw">
-                  <a class="tabbtn remove" href="javascript:void(0)">Sil</a><br>
-                  <a class="tabbtn edit" href="javascript:void(0)">Düzenle</a><br>
+                   <a class="tabbtn" href="javascript:void(0)" onclick="deleteRow(${data.id})">Sil</a><br>
+                   <a class="tabbtn" href="javascript:void(0)" onclick="editRow(${data.id})">Düzenle</a><br>
                </td>
             </tr>
             `)
         }
 
-        $('.tabbtn.remove').click(function () {
-            let id = $(this).closest('.boxr').data("id");
+        function deleteRow(id) {
+            console.log("delete btn basıldı");
             $.get('/delete/' + id, function (res, status) {
                 if (status === 'success') {
                     $(`tr[data-id=${id}]`).remove();
                 }
             });
-        });
+        }
 
-        $('.tabbtn.edit').click(function () {
-            let id = $(this).closest('.boxr').data("id");
+        function editRow(id) {
+            console.log("edit btn basıldı");
             $.get('/edit/' + id, function (res, status) {
                 if (status === 'success') {
                     $('#calculation_id').val(res.data.id);
@@ -281,6 +283,6 @@
                     $('#co2e').val(res.data.co2e);
                 }
             });
-        });
+        }
     </script>
 @endsection
